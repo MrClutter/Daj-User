@@ -1,117 +1,26 @@
-function Daj-User{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$Name,
-        [string]$Sever = "$env:USERDNSDOMAIN",
-        [switch]$HideGroups
-        )
+$Public  = @( Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -ErrorAction SilentlyContinue )
 
-    #List of displayed user parameters
-    $userPropertiesList = @'
-Name
-comment
-Description
-DisplayName
-DistinguishedName
-SID
-EmailAddress
-OfficePhone
-MobilePhone
-Enabled
-PasswordExpired
-LockedOut
-PasswordNevrExpires
-lockoutTime
-LastLogonDate
-LastBadPasswordAttempt
-AccountLockoutTime
-whenChanged
-whenCreated
-PasswordLastSet
-badPwdCount
-'@ -split "`r`n"
-
-    #List of displayed group parameters
-    $groupPropertiesList = @'
-Name
-Description
-'@ -split "`r`n"
-
-
-    $scriptUser = Get-ADUser -Server $Sever -Properties * -Identity $Name
-
-
-    Select-Object -InputObject $ScriptUser -Property $userPropertiesList
-
-    if ($HideGroups -eq $false){
-        $scriptMemberOf = Select-Object -InputObject $scriptUser -ExpandProperty MemberOf 
-
-        $scriptMemberOf | Get-ADGroup -Server $sever -Properties $groupPropertiesList | Select-Object $groupPropertiesList |Format-Table
+Foreach($import in @($Public))
+{
+    Try
+    {
+        . $import.fullname
+    }
+    Catch
+    {
+        Write-Error -Message "Failed to import function $($import.fullname): $_"
     }
 }
 
+Export-ModuleMember -Function $Public.Basename
 
 
-function Daj-Group{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$Name = (Read-Host "Group name: "),
-        [string]$Server = "$env:USERDNSDOMAIN",
-        [switch]$HideMembers
-        )
+Set-Alias -Name "Daj-User"      -Value "Get-UserDaj"
+Set-Alias -Name "Daj"           -Value "Get-UserDaj"
+Set-Alias -Name "Da"            -Value "Get-UserDa"
 
+Set-Alias -Name "Daj-Group"     -Value "Get-GroupDaj"
+Set-Alias -Name "Dag"           -Value "Get-GroupDaj"
 
-    #List of displayed group parameters
-    $groupPropertiesList = @'
-DistinguishedName
-ObjectCategory
-Name
-SID
-Created
-Description
-MemberOf
-Members
-'@ -split "`r`n"
-
-    #List of displayed account parameters
-    $userPropertiesList = @'
-Name
-Description
-comment
-'@ -split "`r`n"
-
-
-    $scriptGrupa = Get-ADgroup -Server $Server -Properties * -Identity $Name
-
-
-
-
-    Select-Object -InputObject $scriptGrupa -Property $groupPropertiesList
-
-    if($HideMembers -eq $false){
-        if($scriptGrupa.Members.Count -le 30){
-            $scriptMembers = Select-Object -InputObject $scriptGrupa -ExpandProperty Members 
-            $scriptMembers | Get-ADObject -Server $Server -Properties $userPropertiesList | Select-Object $userPropertiesList |Format-Table
-        }elseif($scriptGrupa.Members.Count -le 150){
-            $scriptGrupa.Members
-        }else{
-            Write-Host "Liczba uzytkownikow w grupie to:" $scriptGrupa.Members.Count 
-        }
-    }
-}
-
-
-function Da {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$Name = (Read-Host "Group name: "),
-        [string]$Server = "$env:USERDNSDOMAIN"
-        )
-    Daj-User -HideGroups -Name $Name -Sever $Server
-}
-
-
-Set-Alias -Name "Daj" -Value "Daj-User"
+Set-Alias -Name "Daj-Computer"  -Value "Get-ComputerDaj"
+Set-Alias -Name "Dac"           -Value "Get-ComputerDaj"

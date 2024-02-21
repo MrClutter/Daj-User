@@ -9,7 +9,7 @@
 @{
 
     RootModule = 'Daj.psm1'
-    ModuleVersion = '1.0.1'
+    ModuleVersion = '1.1.1'
     CompatiblePSEditions = 'Desktop', 'Core'
     GUID = '381904c7-e3ba-4cdb-aa45-462f1f1e0f34'
     Author = 'MrClutter'
