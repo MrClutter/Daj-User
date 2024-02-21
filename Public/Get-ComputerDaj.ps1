@@ -1,4 +1,4 @@
-function Get-UserDaj{
+function Get-ComputerDaj{
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]

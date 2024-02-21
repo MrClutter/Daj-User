@@ -12,8 +12,6 @@ Foreach($import in @($Public))
     }
 }
 
-Export-ModuleMember -Function $Public.Basename
-
 
 Set-Alias -Name "Daj-User"      -Value "Get-UserDaj"
 Set-Alias -Name "Daj"           -Value "Get-UserDaj"
@@ -24,3 +22,7 @@ Set-Alias -Name "Dag"           -Value "Get-GroupDaj"
 
 Set-Alias -Name "Daj-Computer"  -Value "Get-ComputerDaj"
 Set-Alias -Name "Dac"           -Value "Get-ComputerDaj"
+
+
+Export-ModuleMember -Function $Public.Basename
+Export-ModuleMember -Alias * -Function *
