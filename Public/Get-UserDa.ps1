@@ -1,3 +1,8 @@
 Function Get-UserDa { 
-    Get-UserDaj $args -HideGroups 
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$name,
+        [strine]$server = $env:USERDNSDOMAIN
+    )
+    Get-UserDaj -HideGroups -name $name -server $server 
 }

@@ -3,8 +3,8 @@ function Get-UserDaj{
     param(
         [Parameter(Mandatory)]
         [string]$Name,
-        [string]$Sever = $env:USERDNSDOMAIN,
-        [bool]$HideGroups = $false
+        [string]$Server = $env:USERDNSDOMAIN,
+        [switch]$HideGroups
         )
 
 
@@ -37,14 +37,14 @@ function Get-UserDaj{
         'Description'
     )
 
-    $scriptUser = Get-ADUser -Server $Sever -Properties * -Identity $Name
+    $scriptUser = Get-ADUser -Server $Server -Properties * -Identity $Name
 
     Select-Object -InputObject $ScriptUser -Property $userPropertiesList
 
     if ($HideGroups -eq $false){
         $scriptMemberOf = Select-Object -InputObject $scriptUser -ExpandProperty MemberOf 
 
-        $scriptMemberOf | Get-ADGroup -Server $sever -Properties $groupPropertiesList | Select-Object $groupPropertiesList |Format-Table
+        $scriptMemberOf | Get-ADGroup -Server $Server -Properties $groupPropertiesList | Select-Object $groupPropertiesList |Format-Table
     }
 }
 
